@@ -1,0 +1,16 @@
+# Build artifacts
+build.log
+build.pid
+build-crashed-*.log
+BUILD_CRASH_REPORT.md
+
+# Notes and work docs
+notes/
+
+# IDE
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
