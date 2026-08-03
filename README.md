@@ -36,7 +36,8 @@ docker run --gpus all -v ./apertus-v1.5-70b-nvfp4:/model \
   --reasoning-parser apertus
 ```
 
-The image is published on Docker Hub as `onpremai/vllm-apertus-1p5`.
+The image is published on Docker Hub as
+[`onpremai/vllm-apertus-1p5`](https://hub.docker.com/repository/docker/onpremai/vllm-apertus-1p5).
 Supported checkpoints:
 
 - [`onprem-ai/Apertus-v1.5-70B-NVFP4`](https://huggingface.co/onprem-ai/Apertus-v1.5-70B-NVFP4) (NVFP4 three-tier, 48 GiB)
