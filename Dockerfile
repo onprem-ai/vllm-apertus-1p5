@@ -5,6 +5,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG VLLM_WHEEL_URL=https://wheels.vllm.ai/3333d7cb6391d27bac146f8eaf869e6e318f429f/vllm-0.26.1rc1.dev164%2Bg3333d7cb6-cp38-abi3-manylinux_2_28_x86_64.whl
 ARG TRANSFORMERS_APERTUS_COMMIT=a988895b5160ba13e1a92151a57fd74eb94fd6da
 
+LABEL org.opencontainers.image.source="https://github.com/onprem-ai/vllm-apertus-1p5"
+LABEL org.opencontainers.image.description="GPU-native Apertus 1.5 multimodal serving for vLLM"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
+
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
     UV_HTTP_TIMEOUT=500 \
