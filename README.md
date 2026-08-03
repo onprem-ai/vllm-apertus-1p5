@@ -9,11 +9,47 @@ PRs are merged into their respective upstream releases, this repo will be
 archived (the Docker image will still work, but users should switch to
 the upstream vLLM image instead.
 
-> Thanks to [Swiss AI](https://huggingface.co/swiss-ai), [blancsw](https://github.com/blancsw),
+Thanks to [Swiss AI](https://huggingface.co/swiss-ai), [blancsw](https://github.com/blancsw),
   [Anunay-Yadav](https://github.com/Anunay-Yadav), [Oleg](https://github.com/loleg),
   [Cyrilvallez](https://github.com/Cyrilvallez), [AryanAhadinia](https://github.com/AryanAhadinia),
   [robmsmt](https://github.com/robmsmt), and [Neural Magic](https://github.com/neuralmagic) -
   see [Attribution](#attribution) for full credits.
+
+## Quick Start
+
+Use the pre-built Docker image to serve any Apertus 1.5 checkpoint:
+
+```bash
+docker run --gpus all -v /path/to/model:/model \
+  onpremai/vllm-apertus-1p5:latest \
+  --model /model \
+  --served-model-name apertus-v1.5-70b \
+  --host 0.0.0.0 --port 8080 \
+  --dtype auto \
+  --chat-template /model/chat_template.jinja \
+  --tool-call-parser apertus --enable-auto-tool-choice \
+  --reasoning-parser apertus
+```
+
+The image is published on Docker Hub as `onpremai/vllm-apertus-1p5`.
+Supported checkpoints:
+
+- [`onprem-ai/Apertus-v1.5-70B-NVFP4`](https://huggingface.co/onprem-ai/Apertus-v1.5-70B-NVFP4) (NVFP4 three-tier, 48 GiB)
+- [`onprem-ai/Apertus-v1.5-70B-FP8`](https://huggingface.co/onprem-ai/Apertus-v1.5-70B-FP8) (FP8 float-quantized, 71 GiB)
+- [`swiss-ai/Apertus-v1.5-70B`](https://huggingface.co/swiss-ai/Apertus-v1.5-70B) (BF16, official release)
+- Any checkpoint using `Apertus1p5ForConditionalGeneration` architecture
+
+## Supported Models
+
+- [`onprem-ai/Apertus-v1.5-70B-NVFP4`](https://huggingface.co/onprem-ai/Apertus-v1.5-70B-NVFP4) (NVFP4 three-tier mixed-precision, 48 GiB)
+- [`onprem-ai/Apertus-v1.5-70B-FP8`](https://huggingface.co/onprem-ai/Apertus-v1.5-70B-FP8) (FP8 float-quantized, 71 GiB)
+- [`onprem-ai/Apertus-v1.5-8B-NVFP4`](https://huggingface.co/onprem-ai/Apertus-v1.5-8B-NVFP4) (NVFP4, smaller footprint)
+- [`onprem-ai/Apertus-v1.5-8B-FP8`](https://huggingface.co/onprem-ai/Apertus-v1.5-8B-FP8) (FP8 float-quantized)
+- [`swiss-ai/Apertus-v1.5-70B`](https://huggingface.co/swiss-ai/Apertus-v1.5-70B) (BF16, official release)
+- [`swiss-ai/Apertus-v1.5-8B`](https://huggingface.co/swiss-ai/Apertus-v1.5-8B) (BF16, official release)
+- Same architecture (`Apertus1p5ForConditionalGeneration`) in any
+  compressed-tensors format (FP8_DYNAMIC, NVFP4, etc.)
+- `ApertusForCausalLM` (backward-compatible text-only architecture)
 
 ## Upstream Dependencies
 
@@ -37,7 +73,7 @@ This image builds on two unmerged upstream PRs:
   are no longer needed. The model code can use the upstream transformers tokenizers.
 - Once both PRs land and a vLLM release includes them, this repo is archived.
 
-## Quick Start
+## Run the Build
 
 ... (build content) ...
 
@@ -59,22 +95,6 @@ can make a no-swap host unresponsive.
 | `patches/0002-reasoning-init.diff` | Registers apertus reasoning parser |
 | `patches/apertus_reasoning_parser.py` | Apertus reasoning parser (PR #50496) |
 
----
-
-## Supported Models
-
-- [`onprem-ai/Apertus-v1.5-70B-NVFP4`](https://huggingface.co/onprem-ai/Apertus-v1.5-70B-NVFP4) (NVFP4 three-tier mixed-precision, 48 GiB)
-- [`onprem-ai/Apertus-v1.5-70B-FP8`](https://huggingface.co/onprem-ai/Apertus-v1.5-70B-FP8) (FP8 float-quantized, 71 GiB)
-- [`onprem-ai/Apertus-v1.5-8B-NVFP4`](https://huggingface.co/onprem-ai/Apertus-v1.5-8B-NVFP4) (NVFP4, smaller footprint)
-- [`onprem-ai/Apertus-v1.5-8B-FP8`](https://huggingface.co/onprem-ai/Apertus-v1.5-8B-FP8) (FP8 float-quantized)
-- [`swiss-ai/Apertus-v1.5-70B`](https://huggingface.co/swiss-ai/Apertus-v1.5-70B) (BF16, official release)
-- [`swiss-ai/Apertus-v1.5-8B`](https://huggingface.co/swiss-ai/Apertus-v1.5-8B) (BF16, official release)
-- Same architecture (`Apertus1p5ForConditionalGeneration`) in any
-  compressed-tensors format (FP8_DYNAMIC, NVFP4, etc.)
-- `ApertusForCausalLM` (backward-compatible text-only architecture)
-
----
-
 ## Quantization Support
 
 Any checkpoint using the `compressed-tensors` format works:
@@ -83,8 +103,6 @@ Any checkpoint using the `compressed-tensors` format works:
 - NVFP4/three-tier (NVFP4A16 on MLP + FP8 on attention + BF16 on norms)
 
 SGLang is NOT supported for compressed-tensors mixed-precision checkpoints.
-
----
 
 ## Performance
 
@@ -98,8 +116,6 @@ Results from [llmapibenchmark](https://github.com/onpremai/llmapibenchmark) with
 | 4 | 104 | 2500 | 1.3s |
 | 8 | 176 | 2500 | 2.7s |
 | 20 | 294 | 2500 | 6.8s |
-
----
 
 ## Building
 
@@ -177,5 +193,3 @@ This project builds on the work of many contributors:
   quantization tooling
 - **onprem-ai** -- [llmapibenchmark](https://github.com/onpremai/llmapibenchmark)
   benchmarking tool
-
----
