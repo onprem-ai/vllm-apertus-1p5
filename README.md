@@ -20,7 +20,12 @@ Thanks to [Swiss AI](https://huggingface.co/swiss-ai), [blancsw](https://github.
 Use the pre-built Docker image to serve any Apertus 1.5 checkpoint:
 
 ```bash
-docker run --gpus all -v /path/to/model:/model \
+# Download the checkpoint
+huggingface-cli download onprem-ai/Apertus-v1.5-70B-NVFP4 \
+  --local-dir ./apertus-v1.5-70b-nvfp4
+
+# Serve it
+docker run --gpus all -v ./apertus-v1.5-70b-nvfp4:/model \
   onpremai/vllm-apertus-1p5:latest \
   --model /model \
   --served-model-name apertus-v1.5-70b \
